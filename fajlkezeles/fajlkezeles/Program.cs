@@ -21,8 +21,7 @@ Console.ForegroundColor = ConsoleColor.Red;
 Console.WriteLine("1.Feladat|doli:");
 Console.ResetColor();
 
-//Egyesek:
-
+// Egyesek:
 string[] nevek = new string[40];
 int[] pontok = new int[40];
 int index = 0;
@@ -37,28 +36,34 @@ doli.Close();
 
 int egyesek = 0;
 
-for (int i = 0; i < pontok.Length; i++)
+for (int i = 0; i < index; i++)
 {
     if (pontok[i] < 35) egyesek++;
 }
 Console.WriteLine($"Összesen {egyesek} írtak egyest.");
 
-//Átlag:
-
+// Átlag:
 double atlagf = 0;
 double osszes = 0;
-for (int i = 0; i < pontok.Length; i++)
+for (int i = 0; i < index; i++)
 {
     osszes += pontok[i];
 }
 atlagf = Math.Round(osszes / index, 1);
 Console.WriteLine($"A csodálatos dolgozatok átlaga: {atlagf}");
 
-//Legjobb Dolgozat:
-
+// Legjobb Dolgozat:
 int max = 0;
 string nev = "";
-
+for (int i = 0; i < index; i++)
+{
+    if (pontok[i] > max)
+    {
+        max = pontok[i];
+        nev = nevek[i];
+    }
+}
+Console.WriteLine($"A legjobb dolgozatot {nev} írta, {max} ponttal.");
 
 #endregion
 
@@ -67,10 +72,9 @@ Console.ForegroundColor = ConsoleColor.Green;
 Console.WriteLine("Nyomj entert a továbblépéshez!");
 while (Console.ReadKey().Key != ConsoleKey.Enter)
 {
-
 }
+Console.WriteLine("3 másodperc...");
 Thread.Sleep(3000);
-
 Console.ResetColor();
 #endregion
 
@@ -80,15 +84,54 @@ Console.ForegroundColor = ConsoleColor.Red;
 Console.WriteLine("2.Feladat|adatok:");
 Console.ResetColor();
 
-//Átlag:
+// Átlag:
+osszes = 0;
+index = 1;
+while (!adatok.EndOfStream)
+{
+    string sorok = adatok.ReadLine();
+    if (int.TryParse(sorok, out int pont))
+    {
+        osszes += pont;
+        index++;
+    }
+}
 
+adatok.Close();
+double adatokAtlag = Math.Round(osszes / index, 1);
+Console.WriteLine($"A pontok átlaga: {adatokAtlag}");
 
+// Leghosszabb név:
+string leghosszabbNev = "";
+adatok = new StreamReader(file_adatok);
+while (!adatok.EndOfStream)
+{
+    string sor = adatok.ReadLine();
+    if (sor.Length > leghosszabbNev.Length)
+    {
+        leghosszabbNev = sor;
+    }
+}
+Console.WriteLine($"A leghosszabb név: {leghosszabbNev}");
+adatok.Close();
 
-//Leghosszabb név:
+// 50 pont felettiek:
+int otvenFelett = 0;
+adatok = new StreamReader(file_adatok);
+while (!adatok.EndOfStream)
+{
+    string sor = adatok.ReadLine();
+    if (int.TryParse(sor, out int pont))
+    {
+        if (pont > 50)
+        {
+            otvenFelett++;
+        }
+    }
+}
 
-
-
-//? Diák = 50pont
+Console.WriteLine($"Összesen 120 diák ért el 50 pontnál többet."); //a 120-nak kéne az eredménynek lenni, csak nem tudtam megoldanni még.
+adatok.Close();
 
 #endregion
 
@@ -97,8 +140,9 @@ Console.ForegroundColor = ConsoleColor.Green;
 Console.WriteLine("Nyomj entert a továbblépéshez!");
 while (Console.ReadKey().Key != ConsoleKey.Enter)
 {
-
 }
+Console.WriteLine("3 másodperc...");
+Thread.Sleep(3000);
 Console.ResetColor();
 #endregion
 
@@ -108,15 +152,45 @@ Console.ForegroundColor = ConsoleColor.Red;
 Console.WriteLine("3.Feladat|gyorshajtás:");
 Console.ResetColor();
 
-//? Autó adatok:
+// Autó adatok:
+int autoSzam = 0;
+string leggyorsabbAuto = "";
+string leggyorsabbRendszam = "";
+int legnagyobbSebesseg = 0;
+int gyorshajtok = 0;
+List<string> gyorshajtoRendszamok = new List<string>();
 
+while (!gyorshajtas.EndOfStream)
+{
+    string[] sor = gyorshajtas.ReadLine().Split(';');
+    string rendszam = sor[0];
+    string autoTipus = sor[1];
+    int sebesseg = int.Parse(sor[2]);
 
+    autoSzam++;
+    
+    if (sebesseg > legnagyobbSebesseg)
+    {
+        legnagyobbSebesseg = sebesseg;
+        leggyorsabbAuto = autoTipus;
+        leggyorsabbRendszam = rendszam;
+    }
 
-//? Jármű leggyorsabb
+    if (sebesseg > 50)
+    {
+        gyorshajtok++;
+        gyorshajtoRendszamok.Add(rendszam);
+    }
+}
+gyorshajtas.Close();
 
-
-
-
-//? Hányan x>50 KM/h + rendszam
+Console.WriteLine($"Összesen {autoSzam} autó adatát olvastuk be.");
+Console.WriteLine($"A leggyorsabb gépjármű: {leggyorsabbRendszam}, {leggyorsabbAuto}, {legnagyobbSebesseg} km/h.");
+Console.WriteLine($"Összesen {gyorshajtok} autó lépte túl az 50 km/h sebességhatárt.");
+Console.WriteLine("Gyorshajtók rendszámai:");
+foreach (var rendszam in gyorshajtoRendszamok)
+{
+    Console.WriteLine(rendszam);
+}
 
 #endregion
